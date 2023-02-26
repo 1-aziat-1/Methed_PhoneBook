@@ -90,6 +90,7 @@ body {
   visibility: hidden;
   width: 100%;
   z-index: 1;
+  
 }
 
 .form-overlay.is-visible {
@@ -129,4 +130,15 @@ body {
   background-color: #3E5E93;
   color: #fff;
   text-align: center;
+}
+
+.btn-fix {
+  width: 25px;
+  height: 25px;
+  border: none;
+  color: #fff;
+  background-color: inherit;
+  background-image: url('../img/fix.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
 }
