@@ -1,6 +1,6 @@
 'use strict';
 
-const data = [
+let data = [
   {
     name: 'Иван',
     surname: 'Петров',
@@ -17,13 +17,19 @@ const data = [
     phone: '+79800252525',
   },
   {
-    name: 'Мария',
+    name: 'Арина',
     surname: 'Попова',
     phone: '+79876543210',
   },
 ];
 
 {
+  const sortData = (sortElem, data) => {
+    const arrDataName = data.map(item => item[sortElem]).sort();
+    const arrDataSort = arrDataName.map(item => data.find(elem => elem[sortElem] === item));
+    return arrDataSort;
+  };
+
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -81,12 +87,13 @@ const data = [
     table.classList.add('table', 'table-striped');
 
     const thead = document.createElement('thead');
+    table.thead = thead;
     thead.insertAdjacentHTML('beforeend', `
       <tr>
         <th class='delete'>Удалить</th>
-        <th>Имя</th>
-        <th>Фамилия</th>
-        <th>Телефон</th>
+        <th name="name">Имя</th>
+        <th name="surname">Фамилия</th>
+        <th name="tel">Телефон</th>
       </tr>
     `);
 
@@ -110,15 +117,15 @@ const data = [
       <button class="close" type="button"></button>
       <h2 class="form-title">Добавить контакты</h2>
       <div class="form-group">
-        <label class="form-label for="name">Имя</label>
+        <label class="form-label" for="name">Имя</label>
         <input class="form-input" name="name" id="name" type="text" required/>
       </div>
       <div class="form-group">
-        <label class="form-label for="surname">Фамилия</label>
+        <label class="form-label" for="surname">Фамилия</label>
         <input class="form-input" name="surname" id="surname" type="text" required/>
       </div>
       <div class="form-group">
-        <label class="form-label for="phone">Телефон</label>
+        <label class="form-label" for="phone">Телефон</label>
         <input class="form-input" name="phone" id="phone" type="number" required/>
       </div>
     `);
@@ -164,22 +171,23 @@ const data = [
         text: 'Удалить',
       },
     ]);
-
     header.headerContainer.append(logo);
     main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
     app.append(header, main);
-
     return {
       list: table.tbody,
       logo,
       btnAdd: buttonGroup.btns[0],
+      btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
+      header: table.thead,
     };
   };
 
   const createRow = ({name: firstName, surname, phone}) => {
     const tr = document.createElement('tr');
+    tr.classList.add('contact');
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -232,20 +240,46 @@ const data = [
     const app = document.querySelector(selecrorApp);
     const phoneBook = renderPhoneBook(app, title);
 
-    const {list, logo, btnAdd, formOverlay, form} = phoneBook;
+    const {
+      list,
+      logo,
+      btnAdd,
+      formOverlay,
+      form,
+      btnDel,
+      header} = phoneBook;
+      console.log(list);
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
-    console.log(form);
     btnAdd.addEventListener('click', () => {
       formOverlay.classList.add('is-visible');
     });
 
-    form.addEventListener('click', event => {
-      event.stopPropagation();
+    formOverlay.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target === formOverlay || target.classList.contains('close')) {
+        formOverlay.classList.remove('is-visible');
+      }
     });
 
-    formOverlay.addEventListener('click', () => {
-      formOverlay.classList.remove('is-visible');
+    btnDel.addEventListener('click', () => {
+      document.querySelectorAll('.delete').forEach(del => {
+        del.classList.toggle('is-visible');
+      });
+    });
+
+    list.addEventListener('click', e => {
+      const target = e.target;
+      if (target.closest('.del-icon')) {
+        target.closest('.contact').remove();
+      }
+    });
+    header.addEventListener('click', e => {
+      const sortElem = e.target.getAttribute('name');
+      if (sortElem === 'name' || sortElem === 'surname') {
+        list.innerHTML = '';
+        renderContacts(list, sortData(sortElem, data));
+      }
     });
   };
 
