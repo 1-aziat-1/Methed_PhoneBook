@@ -1,6 +1,6 @@
 'use strict';
 
-let data = [
+let oldData = [
   {
     name: 'Иван',
     surname: 'Петров',
@@ -24,14 +24,43 @@ let data = [
 ];
 
 {
+  const getStorage = (key) => {
+    let arrObj = JSON.parse(localStorage.getItem(key));
+    return arrObj === null ? arrObj = [] : arrObj;
+  };
+
+  const setStorage = (key, obj) => {
+    const arrdata = getStorage(key);
+    arrdata.push(obj);
+    localStorage.setItem(key, JSON.stringify(arrdata));
+  };
+
+  const removeStorage = (numberTel, key) => {
+    const arrObj = getStorage(key);
+    localStorage.clear();
+    arrObj.forEach(obj => {
+      if (obj.phone === numberTel) return;
+      setStorage(key, obj);
+    });
+  };
+
+  const sortStorage = (key, newArrData) => {
+    localStorage.clear();
+    newArrData.forEach(obj => {
+      setStorage('data', obj);
+    });
+  };
+
+
   const addContactData = contact => {
-    data.push(contact);
-    console.log('data', data);
+    setStorage('data', contact);
   };
 
   const sortData = (sortElem, data) => {
+    console.log(data);
     const arrDataName = data.map(item => item[sortElem]).sort();
     const arrDataSort = arrDataName.map(item => data.find(elem => elem[sortElem] === item));
+    sortStorage('data', arrDataSort);
     return arrDataSort;
   };
 
@@ -219,7 +248,6 @@ let data = [
     tdButton.append(btnFix);
 
     tr.append(tdDel, tdName, tdSurname, tdPhone, tdButton);
-
     return tr;
   };
 
@@ -275,7 +303,10 @@ let data = [
     list.addEventListener('click', e => {
       const target = e.target;
       if (target.closest('.del-icon')) {
-        target.closest('.contact').remove();
+        const itemDel = target.closest('.contact');
+        const numberItem = itemDel.querySelector('a').textContent;
+        removeStorage(numberItem, 'data');
+        itemDel.remove();
       }
     });
   };
@@ -285,7 +316,7 @@ let data = [
       const sortElem = e.target.getAttribute('name');
       if (sortElem === 'name' || sortElem === 'surname') {
         list.innerHTML = '';
-        renderContacts(list, sortData(sortElem, data));
+        renderContacts(list, sortData(sortElem, getStorage('data')));
       }
     });
   };
@@ -308,6 +339,7 @@ let data = [
 
   const init = (selecrorApp, title) => {
     const app = document.querySelector(selecrorApp);
+    const data = getStorage('data');
     const {
       list,
       logo,
