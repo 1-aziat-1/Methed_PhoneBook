@@ -4,6 +4,7 @@ export const renderPhoneBook = (app, title) => {
   const header = create.createHeader();
   const logo = create.createLogo(title);
   const main = create.createMain();
+  const footer = create.createFooter();
   const table = create.createTable();
   const {form, overlay} = create.createForm();
   const buttonGroup = create.createButtonGroup([
@@ -20,7 +21,7 @@ export const renderPhoneBook = (app, title) => {
   ]);
   header.headerContainer.append(logo);
   main.mainContainer.append(buttonGroup.btnWrapper, table, overlay);
-  app.append(header, main);
+  app.append(header, main, footer);
   return {
     list: table.tbody,
     logo,

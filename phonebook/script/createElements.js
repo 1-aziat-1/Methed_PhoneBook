@@ -68,10 +68,7 @@ export const createTable = () => {
   const tbody = document.createElement('tbody');
   table.tbody = tbody;
 
-  const tfoot = document.createElement('tfoot');
-  tfoot.classList.add('footer');
-  tfoot.innerHTML = `Все права защищены &#xa9Максим`;
-  table.append(thead, tbody, tfoot);
+  table.append(thead, tbody);
   return table;
 };
 
@@ -151,4 +148,11 @@ export const createRow = ({name: firstName, surname, phone}) => {
 
   tr.append(tdDel, tdName, tdSurname, tdPhone, tdButton);
   return tr;
+};
+
+export const createFooter = () => {
+  const footer = document.createElement('footer');
+  footer.classList.add('footer');
+  footer.innerHTML = `Все права защищены &#xa9Максим`;
+  return footer;
 };
